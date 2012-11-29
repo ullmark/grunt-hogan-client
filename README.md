@@ -46,16 +46,32 @@ given the following config and template
 will output the following script file
 #### dist/tmpl.js
 ```javascript
-(function compileHoganTemplates() {
-  window.tmpl=window.tmpl||{};
-  window.tmpl.item=Hogan.compile('<li><h2>{{title}}</h2><p>{{text}}</p></li>');
-  window.tmpl.list=Hogan.compile('<ul id="a-list">{{#items}}{{>item}}{{/items}}</ul>');
-}());
+window.tmpl=window.tmpl||{};
+window.tmpl.item=Hogan.compile('<li><h2>{{title}}</h2><p>{{text}}</p></li>');
+window.tmpl.list=Hogan.compile('<ul id="a-list">{{#items}}{{>item}}{{/items}}</ul>');
 ```
 ready to use/include/concat etc in your app like this.
 
 ```javascript
 tmpl.list.render({ items: [] });
+```
+
+### Wrapping the templates.
+I made this plugin for a very specific case where I also needed to wrap
+the templates in some code due to async loading of Hogan using
+[head.js](http://headjs.com/).
+
+Since this task is a code generator I decided to add the **wrap**
+property to the options. 
+
+#### config
+```javascript
+options: {
+  wrap: {
+    start: 'head.ready(function() {',
+    end: '});'
+  }
+}
 ```
 
 ## Todo

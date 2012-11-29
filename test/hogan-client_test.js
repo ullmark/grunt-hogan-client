@@ -3,7 +3,9 @@
 
   "use strict";
 
-  var grunt = require('grunt');
+  var grunt = require('grunt'),
+      fs = require('fs'),
+      path = require('path');
 
   /*
     ======== A Handy Little Nodeunit Reference ========
@@ -25,17 +27,19 @@
       test.ifError(value)
   */
 
-  exports.namespaced = {
+  exports.acceptanceTests = {
     compile: function(test) {
-      test.expect(2);
+      var expectedFiles = grunt.file.expandFiles('test/expected/**/*.js');
+      test.expect(expectedFiles.length);
 
-      var actual = grunt.file.read('test/tmp/bar.js');
-      var expected = grunt.file.read('test/expected/bar.js');
-      test.equal(expected, actual, 'Should compile to correct javascript format using new global variable');
+      var expected, actual, basename;
+      expectedFiles.forEach(function(expectedSrc) {
+        basename = path.basename(expectedSrc);
+        expected = grunt.file.read(expectedSrc);
+        actual = grunt.file.read(path.join('test/tmp', basename));
 
-      actual = grunt.file.read('test/tmp/foo.js');
-      expected = grunt.file.read('test/expected/foo.js');
-      test.equal(expected, actual, 'Should compile to correct javascript format using existing variable');
+        test.equal(expected, actual, 'expected "' + basename + '" to match');
+      });
 
       test.done();
     }

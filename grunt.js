@@ -6,6 +6,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
 
     hoganclient: {
+      // defining a tmpl
       namespaced: {
         options: {
           variable: 'foo.tmpl'
@@ -13,9 +14,21 @@ module.exports = function(grunt) {
         src: ['test/templates/**/*.hogan'],
         dest: 'test/tmp/foo.js'
       },
+      // not defining any variable name
       global: {
         src: ['test/templates/**/*.hogan'],
         dest: 'test/tmp/bar.js'
+      },
+      // wrapping the temnplates in custom code.
+      wrapping: {
+        options: {
+          wrap: {
+            start: 'head.ready(function(){',
+            end: '});'
+          }
+        },
+        src: ['test/templates/wrap.mustache'],
+        dest: 'test/tmp/wrapping.js'
       }
     },
 

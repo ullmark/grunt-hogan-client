@@ -39,22 +39,34 @@ module.exports = function(grunt) {
   // ==========================================================================
 
   grunt.registerHelper('hoganclient', function(files, options) {
-    var src = '';
+    var src = '',
+        indent = '';
 
     options = grunt.utils._.defaults(options || {}, {
       variable: 'window.tmpl'
     });
 
-    src += '(function compileHoganTemplates() {' + grunt.utils.linefeed;
-    src += '  ' + options.variable + '=' + options.variable + '||{};' + grunt.utils.linefeed;
+    if (options.wrap) {
+      indent = '  ';
+    }
+
+    if (options.wrap && options.wrap.start) {
+      src += options.wrap.start;
+      src += grunt.utils.linefeed;
+    }
+
+    src += indent + options.variable + '=' + options.variable + '||{};' + grunt.utils.linefeed;
 
     files.map(function(filepath) {
       var name = path.basename(filepath, path.extname(filepath));
       var file = grunt.file.read(filepath).replace(cleaner, '').replace(/'/, '\'');
-      src += '  ' + options.variable + '.' + name + '=Hogan.compile(\'' + file + '\');' + grunt.utils.linefeed;
+      src += indent + options.variable + '.' + name + '=Hogan.compile(\'' + file + '\');' + grunt.utils.linefeed;
     });
 
-    src += '}());' + grunt.utils.linefeed;
+    if (options.wrap && options.wrap.end) {
+      src += options.wrap.end;
+      src += grunt.utils.linefeed;
+    }
 
     return src;
   });
